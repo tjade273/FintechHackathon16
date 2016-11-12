@@ -1,7 +1,9 @@
-contract FiatPrice {
+contract Prices {
   uint public currentPrice;
   uint lastUpdate;
   address public owner;
+
+  mapping(string => uint) prices;
 
   modifier onlyOwner{
     if(msg.sender != owner)
@@ -9,16 +11,20 @@ contract FiatPrice {
     _;
   }
 
-  function update(uint price) onlyOwner{
+  function updateFiat(uint price) onlyOwner{
     currentPrice = price;
     lastUpdate = now;
+  }
+
+  function updateCommodity(string commodity, uint price) onlyOwner{
+    prices[commodity] = price;
   }
 
   function lastUpdated()constant returns (uint){
     return now - lastUpdate;
   }
 
-  function FiatPrice(){
+  function Prices(){
     owner = msg.sender;
     lastUpdate = now;
   }

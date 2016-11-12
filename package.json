@@ -1,0 +1,19 @@
+{
+  "name": "hedgehog",
+  "version": "1.0.0",
+  "description": "Bringing synthetic options to farmers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tjade273/FintechHackathon16.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tjade273/FintechHackathon16/issues"
+  },
+  "homepage": "https://github.com/tjade273/FintechHackathon16#readme"
+}
