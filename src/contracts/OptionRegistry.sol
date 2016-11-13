@@ -4,7 +4,7 @@ import "./OptionMarket.sol";
 
 contract OptionRegistry{
 
-  Prices priceFeed;
+  Prices public priceFeed;
 
 
     enum OptionType{Put, Call}
@@ -80,7 +80,7 @@ contract OptionRegistry{
 
   function executeOption(uint id){
     Option option = options[id];
-    uint payout = execute(id, priceFeed.getPrice(option.commodity));
+    uint payout = execute(id, priceFeed.getPrice(option.commodity)) * INRperETH();
     User writer  = users[option.writer];
 
     writer.balance -= payout;
@@ -151,5 +151,13 @@ contract OptionRegistry{
   function getOptionInfo(uint ID) constant returns (address, address, uint, uint, uint, bool){
     Option option = options[ID];
     return (option.buyer,option.writer,option.expiration,option.strikePrice, option.quantity, option.optionType == OptionType.Call);
+  }
+
+  function INRperETH() constant returns (uint){
+    return priceFeed.getPrice("INR")/1000;
+  }
+
+  function() payable {
+    users[msg.sender].balance += msg.value;
   }
 }

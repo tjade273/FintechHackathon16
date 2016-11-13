@@ -82,7 +82,7 @@ contract OptionsMarket {
 
   function fillBid(Order storage order) internal returns (uint) {
     if(order.isFilled) throw;
-    reg.transferETH(order.owner, msg.sender, order.orderPrice*order.quantity);
+    reg.transferETH(order.owner, msg.sender, order.orderPrice*order.quantity/reg.INRperETH());
     uint orderType;
     if(!order.isCall) orderType = 1;
     uint optionID = reg.writeOption(msg.sender, order.owner, orderType, order.quantity, order.expiration, order.strikePrice, order.commodity);
@@ -94,7 +94,7 @@ contract OptionsMarket {
 
   function fillAsk(Order storage order) internal returns (uint){
     if(order.isFilled) throw;
-    reg.transferETH(msg.sender,order.owner, order.orderPrice*order.quantity);
+    reg.transferETH(msg.sender,order.owner, order.orderPrice*order.quantity/reg.INRperETH());
     uint orderType;
     if(!order.isCall) orderType = 1;
     uint optionID = reg.writeOption(order.owner, msg.sender,  orderType, order.quantity, order.expiration, order.strikePrice, order.commodity);
@@ -163,8 +163,4 @@ contract OptionsMarket {
       else return putAsks.length;
     }
   }
-
-
-
-
 }
