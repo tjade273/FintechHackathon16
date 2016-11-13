@@ -1,6 +1,6 @@
 pragma solidity ^0.4.4;
-import "Prices.sol";
-import "OptionMarket.sol";
+import "./Prices.sol";
+import "./OptionMarket.sol";
 
 contract OptionRegistry{
 

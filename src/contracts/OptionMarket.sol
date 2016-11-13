@@ -1,4 +1,4 @@
-import "OptionRegistry.sol";
+import "./OptionRegistry.sol";
 contract OptionsMarket {
 
   OptionRegistry reg;
@@ -145,6 +145,23 @@ contract OptionsMarket {
       }
     }
     return (order.owner, order.expiration, order.strikePrice, order.orderPrice, order.quantity, order.isCall, order.isFilled);
+  }
+
+  function getBookSize(bool isCall, bool isBid) constant returns(uint){
+    if(isCall){
+      if(isBid){
+        return callBids.length;
+      }
+      else{
+        return callAsks.length;
+      }
+    }
+    else{
+      if(isBid){
+        return putBids.length;
+      }
+      else return putAsks.length;
+    }
   }
 
 
