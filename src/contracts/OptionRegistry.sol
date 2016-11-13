@@ -40,22 +40,25 @@ contract OptionRegistry{
 
   mapping(address => User) users;
 
-
+  OptionsMarket public market = new OptionsMarket();
 
   uint nonce;
 
 
+  modifier onlyMarket{
+    if(msg.sender != market) throw;
+    _;
+  }
 
-
-  function writeOption(address to, uint typeID, uint quantity, uint expiration, uint strikePrice, string commodity) returns (uint id){
-    id = uint(sha3(msg.sender, nonce++));
+  function writeOption(address from, address to, uint typeID, uint quantity, uint expiration, uint strikePrice, string commodity) onlyMarket returns (uint id){
+    id = uint(sha3(from, nonce++));
     Option option = options[id];
     if(option.writer != address(0)) throw;
-    User user = users[msg.sender];
+    User user = users[from];
 
     //Create  new option
     option.buyer = to;
-    option.writer = msg.sender;
+    option.writer = from;
 
     option.expiration = expiration;
     option.quantity = quantity;
@@ -124,6 +127,16 @@ contract OptionRegistry{
     }
   }
 
+  function transferETH(address from, address to, uint amount) onlyMarket {
+    User f = User[from];
+    User t = User[to];
+
+    if(f.balance - f.boundCollateral < amount) throw;
+
+    f.balance -= amount;
+    t.balance += amount;
+  }
+
   function depositETH() payable {
     users[msg.sender].balance += msg.value;
   }
@@ -133,6 +146,8 @@ contract OptionRegistry{
     typeIDs[1] = OptionType.Put;
     priceFeed  = Prices(pricefeed);
   }
+
+
 
 
 
