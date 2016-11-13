@@ -36,7 +36,7 @@ contract OptionRegistry{
     uint[] issuedIds;
   }
 
-  mapping(uint => Option) options;
+  mapping(uint => Option) public options;
   mapping(uint => OptionType) typeIDs;
 
   mapping(address => User) users;
@@ -155,6 +155,14 @@ contract OptionRegistry{
 
   function INRperETH() constant returns (uint){
     return priceFeed.getPrice("INR")/1000;
+  }
+
+  function getBoughtOptions(address addr) constant returns (uint[]){
+    return users[addr].ownedIDs;
+  }
+
+  function getIssuedOptions(address addr) constant returns (uint[]){
+    return users[addr].issuedIds;
   }
 
   function() payable {

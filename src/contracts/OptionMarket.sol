@@ -126,7 +126,7 @@ contract OptionsMarket {
     return (order.owner, order.expiration, order.strikePrice, order.orderPrice, order.quantity, order.isCall, order.isFilled);
   }
 
-  function getOrderInfoByIndex(uint i, bool isCall, bool isBid) returns (address, uint, uint, uint, uint, bool, bool){
+  function getOrderInfoByIndex(uint i, bool isCall, bool isBid) returns (address, uint, uint, uint, uint, string, bool, bool){
     Order storage order;
     if(isBid){
       if(isCall){
@@ -144,7 +144,7 @@ contract OptionsMarket {
         order = putAsks[i];
       }
     }
-    return (order.owner, order.expiration, order.strikePrice, order.orderPrice, order.quantity, order.isCall, order.isFilled);
+    return (order.owner, order.expiration, order.strikePrice, order.orderPrice, order.quantity, order.commodity, order.isCall, order.isFilled);
   }
 
   function getBookSize(bool isCall, bool isBid) constant returns(uint){
