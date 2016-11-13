@@ -1,5 +1,4 @@
 contract Prices {
-  uint public currentPrice;
   uint lastUpdate;
   address public owner;
 
@@ -11,13 +10,13 @@ contract Prices {
     _;
   }
 
-  function updateFiat(uint price) onlyOwner{
-    currentPrice = price;
+  function update(string commodity, uint price) onlyOwner{
+    prices[commodity] = price;
     lastUpdate = now;
   }
 
-  function updateCommodity(string commodity, uint price) onlyOwner{
-    prices[commodity] = price;
+  function getPrice(string commodity) returns (uint){
+    return prices[commodity];
   }
 
   function lastUpdated()constant returns (uint){

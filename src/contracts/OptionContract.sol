@@ -1,5 +1,5 @@
 import "Prices.sol";
-library OptionContract{ //Library to manage options
+contract OptionContract{ //Library to manage options
   //Prices priceContract;
 
   enum OptionType{Put, Call}
@@ -17,12 +17,12 @@ library OptionContract{ //Library to manage options
     OptionType optionType;
   }
 
-  function transfer(Option storage option, address to){
+  function transfer(Option storage option, address to) internal{
     if(msg.sender != option.buyer) throw;
     option.buyer = to;
   }
 
-  function execute(Option storage option, uint marketPrice) returns (uint payout){
+  function execute(Option storage option, uint marketPrice) internal returns (uint payout){
     if(option.expiration < now) throw;
 
     uint strikePrice = option.strikePrice;
