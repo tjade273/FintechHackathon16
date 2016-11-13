@@ -25,16 +25,16 @@ function fetchOrders(isCall, isBid, l){
   //console.log(orders);
   return orders;
 }
-
-
+registry.depositETH({from:eth.accounts[3], value: web3.toWei(100)});
+var index = 0;
 var event = market.OrderFilled();
 
 event.watch(function(err,res){
-
+  index++;
+  setTimeout(function(){fillOrder(index)}, 3000);
 });
 
-
-function onErr(err) {
-  console.log(err);
-  return 1;
+function fillOrder(i){
+  var order = market.getOrderInfoByIndex(i);
+  market.fillOrder(order[5])
 }
