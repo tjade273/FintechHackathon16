@@ -1,5 +1,6 @@
 pragma solidity ^0.4.4;
 import "Prices.sol";
+import "OptionMarket.sol";
 
 contract OptionRegistry{
 
@@ -46,7 +47,7 @@ contract OptionRegistry{
 
 
   modifier onlyMarket{
-    if(msg.sender != market) throw;
+    if(msg.sender != address(market)) throw;
     _;
   }
 
@@ -117,19 +118,19 @@ contract OptionRegistry{
       if(strikePrice - marketPrice > strikePrice){
          return 0;
       }
-      else return strikePrice - marketPrice;
+      else return (strikePrice - marketPrice)*option.quantity;
     }
     else if (option.optionType == OptionType.Call){
       if(marketPrice - strikePrice > marketPrice){
         return 0;
       }
-      else return marketPrice - strikePrice;
+      else return (marketPrice - strikePrice)*option.quantity;
     }
   }
 
   function transferETH(address from, address to, uint amount) onlyMarket {
-    User f = User[from];
-    User t = User[to];
+    User f = users[from];
+    User t = users[to];
 
     if(f.balance - f.boundCollateral < amount) throw;
 
@@ -147,11 +148,8 @@ contract OptionRegistry{
     priceFeed  = Prices(pricefeed);
   }
 
-
-
-
-
-  //function() payable {
-    //depositETH();
-  //}
+  function getOptionInfo(uint ID) constant returns (address, address, uint, uint, uint, bool){
+    Option option = options[ID];
+    return (option.buyer,option.writer,option.expiration,option.strikePrice, option.quantity, option.optionType == OptionType.Call);
+  }
 }
