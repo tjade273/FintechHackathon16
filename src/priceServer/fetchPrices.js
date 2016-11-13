@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var Web3 = require("web3");
 var request = require('request');
 var autobahn = require("autobahn");
@@ -27,14 +28,18 @@ var priceContract = eth.contract(abi).new({from:eth.accounts[0], data:bytecode, 
   }
 });
 
-
+var commodityIDs = ["132944001","132944301","132944521"];
 
 connection.onopen = function (session) {
         function tickerEvent (args,kwargs) {
           if(args[0] == "BTC_ETH"){
             lastETH_BTC = parseFloat(args[1]);
             console.log("Got price: " + parseFloat(args[1]));
-            updateINRPrice();
+            console.log("Contract LastUpdate: " + parseInt(priceContract.lastUpdated()));
+            if(priceContract.lastUpdated() > 10){
+              console.log("Updating price to : " + lastETH_BTC*lastBTC_INR);
+              updateINRPrice();
+            }
           }
         }
         session.subscribe('ticker', tickerEvent);
@@ -47,14 +52,8 @@ connection.onclose = function (){
 
 
 function updateCryptoPrice(){
-  console.log("Contract LastUpdate: " + parseInt(priceContract.lastUpdated()));
-  if(priceContract.lastUpdated() > 10){
-    console.log("Updating price to : " + lastETH_BTC*lastBTC_INR);
-    priceContract.updateFiat(lastETH_BTC*lastBTC_INR*1000, {from:eth.accounts[0]});
-  }
-  console.log("Contract Current Price : " + priceContract.currentPrice());
-  eth.sendTransaction({from:eth.coinbase});
-
+  priceContract.update("INR", lastETH_BTC*lastBTC_INR*1000, {from:eth.accounts[0]}); //Note, price is x1000
+  console.log("Contract Current Price : " + priceContract.getPrice("INR"));
 }
 
 function updateINRPrice(){
@@ -62,19 +61,26 @@ function updateINRPrice(){
     if (!error && response.statusCode == 200) {
       lastBTC_INR = parseFloat(body);
       updateCryptoPrice()
-      updateCommodityPrices();
+      updateCommodityPrices(commodityIDs);
     }
   })
 }
 
-function updateCommodityPrices(id){
+function updateCommodityPrices(ids){
   request("https://data.gov.in/api/datastore/resource.json?resource_id=9ef84268-d588-465a-a308-a864a43d0070&api-key=9519970621eec12da9ceab2df6950553",
   function(error, response, body){
     if(!error && response.statusCode == 200){
-      commodity = JSON.parse(body).records.filter(function(obj){return obj.id == id});
+      commodity = JSON.parse(body).records.filter(function(obj){return ids.indexOf(obj.id) != -1});
       for(var i = 0; i<commodity.length; i++){
-        priceContract.updateCommodity(commodity[i].commodity, parseInt(commodity[i].modal_price))
+        priceContract.update(commodity[i].commodity, parseInt(commodity[i].modal_price),{from:eth.accounts[0]})
       }
     }
-  })
+  });
 }
+
+setInterval(function(){
+  eth.sendTransaction({from:eth.coinbase});
+  console.log("Rice: "+ priceContract.getPrice("Rice"));
+  console.log("Onion: " + priceContract.getPrice("Onion"));
+  console.log("Cotton: "+ priceContract.getPrice("Cotton"));
+}, 1000);

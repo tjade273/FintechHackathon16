@@ -15,7 +15,7 @@ contract Prices {
     lastUpdate = now;
   }
 
-  function getPrice(string commodity) returns (uint){
+  function getPrice(string commodity) constant returns (uint){
     return prices[commodity];
   }
 

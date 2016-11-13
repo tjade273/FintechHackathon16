@@ -126,5 +126,28 @@ contract OptionsMarket {
     return (order.owner, order.expiration, order.strikePrice, order.orderPrice, order.quantity, order.isCall, order.isFilled);
   }
 
+  function getOrderInfoByIndex(uint i, bool isCall, bool isBid) returns (address, uint, uint, uint, uint, bool, bool){
+    Order storage order;
+    if(isBid){
+      if(isCall){
+        order = callBids[i];
+      }
+      else{
+        order = putBids[i];
+      }
+    }
+    else{
+      if(isCall){
+        order = callAsks[i];
+      }
+      else{
+        order = putAsks[i];
+      }
+    }
+    return (order.owner, order.expiration, order.strikePrice, order.orderPrice, order.quantity, order.isCall, order.isFilled);
+  }
+
+
+
 
 }
