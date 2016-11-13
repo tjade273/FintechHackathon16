@@ -30,11 +30,12 @@ var callBids = [];
 var callAsks = [];
 var putBids = [];
 var putAsks = [];
-console.log("Registry Contract: " + registryAddr);
-console.log("Market Contract: " + marketAddr);
-console.log("Price Feed Contract: " + priceAddr);
-console.log("\n\n\n");
+
 function printState(){
+  console.log("Registry Contract: " + registryAddr);
+  console.log("Market Contract: " + marketAddr);
+  console.log("Price Feed Contract: " + priceAddr);
+  console.log("\n\n\n");
 
    callBids= callBids.concat(fetchOrders(true, true, callBids.length));
    callAsks= callAsks.concat(fetchOrders(true, false, callAsks.length));
@@ -49,7 +50,7 @@ function printState(){
   //console.log(callBids);
   //console.log(callBids[1][2]);
   var s = "";
-  s+= "Order Book: \n";
+  s+= "Order Book: \n \n\n";
 
   s+="    Calls: \n\n";
   s+="        Bids: \n";
@@ -65,11 +66,14 @@ function printState(){
 }
 clear()
 printState();
-setTimeout(function(){setInterval(printState, 1000)}, 10000);
+setTimeout(function(){setInterval(printState, 500)}, 6000);
 
-
+setInterval(function(){
 market.placeOrder(true, false, "Cotton", 4, 13, 06, eth.getBlock("latest").timestamp + 15778463, 165467, {from:eth.coinbase, gas:4700000});
 market.placeOrder(true, true, "Cotton", 4, 13, 06, eth.getBlock("latest").timestamp + 15778463, 165467, {from:eth.coinbase, gas:4700000});
 market.placeOrder(true, false, "Cotton", 4, 13, 06, eth.getBlock("latest").timestamp + 15778463, 165467, {from:eth.coinbase, gas:4700000});
 market.placeOrder(true, true, "Cotton", 4, 13, 06, eth.getBlock("latest").timestamp + 15778463, 165467, {from:eth.coinbase, gas:4700000});
 market.placeOrder(true, false, "Cotton", 4, 13, 06, eth.getBlock("latest").timestamp + 15778463, 165467, {from:eth.coinbase, gas:4700000});
+callAsks = callAsks.slice(-5);
+callBids = callBids.slice(-3);
+},100)
